@@ -1,0 +1,777 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Thời khóa biểu Pastel Pro</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --bg-main: #f3faf6;
+        --text-header: #105235;
+        --card-bg: #ffffff;
+        --input-border: #e2f2ea;
+      }
+
+      body {
+        font-family: "Quicksand", sans-serif;
+        background-color: var(--bg-main);
+        color: #333;
+        margin: 0;
+        padding: 20px;
+      }
+
+      .container-custom {
+        max-width: 1300px;
+        margin: 0 auto;
+      }
+
+      .header-title {
+        color: var(--text-header);
+        font-weight: 800;
+        font-size: 2.2rem;
+        text-align: center;
+        margin-bottom: 5px;
+        text-transform: uppercase;
+      }
+
+      .header-subtitle {
+        color: #5bb38a;
+        text-align: center;
+        font-style: italic;
+        font-size: 0.9rem;
+        margin-bottom: 30px;
+      }
+
+      .glass-card {
+        background: var(--card-bg);
+        border-radius: 24px;
+        border: 1.5px solid var(--input-border);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03);
+        padding: 24px;
+      }
+
+      .input-item {
+        width: 100%;
+        padding: 10px 14px;
+        border: 1.5px solid var(--input-border);
+        border-radius: 12px;
+        background-color: #fcfdfd;
+        font-family: "Quicksand", sans-serif;
+        font-weight: 600;
+        outline: none;
+        transition: all 0.2s;
+        color: #444;
+      }
+
+      .input-label {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 0.85rem;
+        font-weight: 700;
+        color: #3d6b58;
+        margin-bottom: 6px;
+        margin-top: 12px;
+      }
+
+      .btn-main {
+        width: 100%;
+        padding: 14px;
+        border-radius: 20px;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        cursor: pointer;
+        border: none;
+        transition: all 0.2s;
+        margin-top: 20px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+      }
+
+      .btn-add {
+        background-color: #fff9db;
+        color: #856404;
+        border: 2px solid #ffe066;
+      }
+
+      .btn-edit-mode {
+        background-color: #fff4e6;
+        color: #d9480f;
+        border: 2px solid #ffd8a8;
+      }
+
+      /* Class Item Tag */
+      .class-item {
+        padding: 12px;
+        border-radius: 18px;
+        margin-bottom: 10px;
+        position: relative;
+        border: 1px solid rgba(0, 0, 0, 0.05);
+        transition: transform 0.2s;
+      }
+
+      .class-item:hover {
+        transform: translateY(-2px);
+      }
+
+      /* Nút Sửa/Xóa trên Tag */
+      .item-actions {
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        display: flex;
+        gap: 4px;
+        opacity: 0.3;
+        transition: opacity 0.2s;
+        z-index: 10;
+      }
+
+      .class-item:hover .item-actions {
+        opacity: 1;
+      }
+
+      .action-btn {
+        font-size: 9px;
+        background: rgba(255, 255, 255, 0.9);
+        padding: 2px 6px;
+        border-radius: 6px;
+        color: #555;
+        border: 1px solid #eee;
+        font-weight: 800;
+        cursor: pointer;
+        text-transform: uppercase;
+      }
+
+      .action-btn.delete:hover {
+        background: #fee2e2;
+        color: #ef4444;
+      }
+
+      .action-btn.edit:hover {
+        background: #f0fdf4;
+        color: #22c55e;
+      }
+
+      /* Table */
+      th {
+        padding: 15px 5px;
+        font-weight: 800;
+        color: var(--text-header);
+        border-bottom: 2px solid #f1f8f4;
+        font-size: 0.9rem;
+      }
+
+      td {
+        padding: 10px;
+        border-right: 1px solid #f8fdfb;
+        vertical-align: top;
+        min-width: 120px;
+      }
+
+      .time-col {
+        font-weight: 800;
+        color: #105235;
+        text-align: center;
+        background-color: #f9fdfb;
+      }
+
+      /* Archive UI */
+      .archive-item {
+        padding: 12px 16px;
+        border-radius: 16px;
+        background: #f8fafc;
+        margin-bottom: 10px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border: 1px solid #eef2f6;
+      }
+
+      .modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.4);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        z-index: 2000;
+        backdrop-filter: blur(4px);
+      }
+
+      .modal-content {
+        background: white;
+        padding: 24px;
+        border-radius: 28px;
+        width: 90%;
+        max-width: 500px;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+      }
+
+      #notification {
+        position: fixed;
+        bottom: 30px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: #105235;
+        color: white;
+        padding: 12px 24px;
+        border-radius: 50px;
+        display: none;
+        z-index: 3000;
+        font-weight: 600;
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+      }
+
+      /* Capture optimization */
+      #captureArea {
+        width: 100%;
+        overflow: visible;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container-custom">
+      <img src="STMEDU.png" width="175px" height="275px" />
+      <h1 class="header-title">QUẢN LÝ THỜI GIAN BIỂU</h1>
+      <p class="header-subtitle">
+        Đừng để thời gian làm bạn bối rối. Hãy xếp lịch hiệu quả!
+      </p>
+
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <!-- CỘT NHẬP LIỆU -->
+        <div class="lg:col-span-4">
+          <div class="glass-card">
+            <h2
+              class="text-lg font-black mb-4 text-emerald-900 flex items-center gap-2"
+            >
+              📝 QUẢN LÝ LỊCH HỌC
+            </h2>
+
+            <div class="input-label">🗓️ Thứ trong tuần</div>
+            <select id="day" class="input-item">
+              <option value="2">Thứ 2</option>
+              <option value="3">Thứ 3</option>
+              <option value="4">Thứ 4</option>
+              <option value="5">Thứ 5</option>
+              <option value="6">Thứ 6</option>
+              <option value="7">Thứ 7</option>
+              <option value="CN">Chủ Nhật</option>
+            </select>
+
+            <div class="grid grid-cols-2 gap-4">
+              <div>
+                <div class="input-label">🎓 Hình thức</div>
+                <select id="type" class="input-item">
+                  <option value="CHÍNH KHÓA">Trên trường</option>
+                  <option value="HỌC THÊM">Học thêm</option>
+                  <option value="NGOẠI KHÓA">Khóa học ngoài</option>
+                </select>
+              </div>
+              <div>
+                <div class="input-label">📚 Môn học</div>
+                <select id="subject" class="input-item">
+                  <option value="Toán">Toán</option>
+                  <option value="Văn">Văn</option>
+                  <option value="Anh">Anh</option>
+                  <option value="Lí">Lí</option>
+                  <option value="Hóa">Hóa</option>
+                  <option value="Sinh">Sinh</option>
+                  <option value="Sử">Sử</option>
+                  <option value="Địa">Địa</option>
+                  <option value="Tin học">Tin học</option>
+                  <option value="GDKT&PL">GDKT&PL</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+              <div>
+                <div class="input-label">🕒 Bắt đầu</div>
+                <input
+                  type="time"
+                  id="startTime"
+                  class="input-item"
+                  value="07:00"
+                />
+              </div>
+              <div>
+                <div class="input-label">🕒 Kết thúc</div>
+                <input
+                  type="time"
+                  id="endTime"
+                  class="input-item"
+                  value="09:00"
+                />
+              </div>
+            </div>
+
+            <div class="input-label">📝 Ghi chú</div>
+            <textarea
+              id="note"
+              class="input-item h-20 resize-none"
+              placeholder="Nhập ghi chú..."
+            ></textarea>
+
+            <button
+              id="mainBtn"
+              onclick="handleAction()"
+              class="btn-main btn-add"
+            >
+              <span id="btnIcon">✅</span>
+              <span id="btnText">THÊM VÀO BẢNG</span>
+            </button>
+            <button
+              id="cancelEdit"
+              onclick="cancelEditMode()"
+              class="w-full text-xs text-slate-400 font-bold mt-3 underline hidden"
+            >
+              Hủy bỏ chỉnh sửa
+            </button>
+
+            <div class="mt-6 pt-6 border-t border-emerald-50">
+              <div class="flex gap-3">
+                <button
+                  onclick="openSaveModal()"
+                  class="flex-1 bg-emerald-50 text-emerald-700 font-bold py-3 rounded-xl border border-emerald-100 text-sm"
+                >
+                  💾 LƯU MỚI
+                </button>
+                <button
+                  onclick="openArchiveModal()"
+                  class="flex-1 bg-slate-50 text-slate-600 font-bold py-3 rounded-xl border border-slate-100 text-sm"
+                >
+                  📂 KHO LƯU
+                </button>
+              </div>
+              <button
+                onclick="clearAllData()"
+                class="w-full mt-3 bg-red-50 text-red-500 font-bold py-3 rounded-xl border border-red-100 text-sm flex items-center justify-center gap-2"
+              >
+                🗑️ XÓA TOÀN BỘ DỮ LIỆU
+              </button>
+              <button
+                onclick="downloadImage()"
+                class="w-full mt-3 bg-emerald-600 text-white font-bold py-4 rounded-2xl flex items-center justify-center gap-2"
+              >
+                📥 TẢI LỊCH HỌC VỀ MÁY
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- CỘT HIỂN THỊ -->
+        <div class="lg:col-span-8">
+          <div id="captureArea" class="glass-card min-h-[600px]">
+            <div class="flex justify-between items-center mb-6">
+              <h2 class="text-xl font-black text-emerald-900" id="currentTitle">
+                XEM THỜI KHÓA BIỂU
+              </h2>
+              <div
+                class="bg-emerald-50 text-emerald-700 px-3 py-1 rounded-full font-black text-sm"
+                id="countBadge"
+              >
+                0
+              </div>
+            </div>
+
+            <div class="overflow-x-auto">
+              <table
+                class="w-full border-collapse"
+                id="timetable"
+                style="min-width: 900px"
+              >
+                <thead>
+                  <tr>
+                    <th style="width: 80px">Giờ</th>
+                    <th>Thứ 2</th>
+                    <th>Thứ 3</th>
+                    <th>Thứ 4</th>
+                    <th>Thứ 5</th>
+                    <th>Thứ 6</th>
+                    <th>Thứ 7</th>
+                    <th>CN</th>
+                  </tr>
+                </thead>
+                <tbody id="timetableBody"></tbody>
+              </table>
+            </div>
+
+            <div
+              id="emptyState"
+              class="py-20 text-center text-slate-300 font-bold italic"
+            >
+              Chưa có lịch học nào. Hãy bắt đầu thêm ngay!
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODALS -->
+    <div id="saveModal" class="modal-overlay">
+      <div class="modal-content">
+        <h3 class="text-xl font-black mb-4">Đặt tên bản lưu</h3>
+        <input
+          type="text"
+          id="saveName"
+          class="input-item mb-6"
+          placeholder="Ví dụ: TKB Tuần 1..."
+        />
+        <div class="flex gap-3">
+          <button
+            onclick="confirmSave()"
+            class="flex-1 bg-emerald-600 text-white font-bold py-3 rounded-xl"
+          >
+            LƯU LẠI
+          </button>
+          <button
+            onclick="closeModals()"
+            class="flex-1 bg-slate-100 font-bold py-3 rounded-xl"
+          >
+            HỦY
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div id="archiveModal" class="modal-overlay">
+      <div class="modal-content">
+        <h3 class="text-xl font-black mb-4">Kho Lưu Trữ</h3>
+        <div id="archiveItems" class="max-h-80 overflow-y-auto pr-2"></div>
+        <button
+          onclick="closeModals()"
+          class="w-full mt-6 bg-slate-800 text-white font-bold py-3 rounded-xl"
+        >
+          ĐÓNG
+        </button>
+      </div>
+    </div>
+
+    <div id="notification">Thông báo</div>
+
+    <script>
+      let schedules = [];
+      let archive = [];
+      let editingId = null;
+      const days = ["2", "3", "4", "5", "6", "7", "CN"];
+
+      // Bảng màu Pastel
+      const colors = {
+        Toán: { bg: "#f3f0ff", border: "#dcd3ff", text: "#6741d9" },
+        Văn: { bg: "#fff0f6", border: "#ffdeeb", text: "#c2255c" },
+        Anh: { bg: "#e7f5ff", border: "#d0ebff", text: "#1c7ed6" },
+        Lí: { bg: "#f0fdf4", border: "#dcfce7", text: "#166534" },
+        Hóa: { bg: "#fff9db", border: "#fff3bf", text: "#f08c00" },
+        Sinh: { bg: "#f4fce3", border: "#e9fac8", text: "#5c940d" },
+        Sử: { bg: "#fff4e6", border: "#ffe8cc", text: "#d9480f" },
+        Địa: { bg: "#f8f9fa", border: "#e9ecef", text: "#495057" },
+        "Tin học": { bg: "#e3fafc", border: "#c5f6fa", text: "#0b7285" },
+        default: { bg: "#f8f9fa", border: "#e2e8f0", text: "#475569" },
+      };
+
+      window.onload = () => {
+        const savedArchive = localStorage.getItem("tkb_archive");
+        if (savedArchive) archive = JSON.parse(savedArchive);
+
+        const lastDraft = localStorage.getItem("tkb_draft");
+        if (lastDraft) {
+          schedules = JSON.parse(lastDraft);
+          render();
+        }
+      };
+
+      function showNotification(msg) {
+        const n = document.getElementById("notification");
+        n.innerText = msg;
+        n.style.display = "block";
+        setTimeout(() => (n.style.display = "none"), 3000);
+      }
+
+      function handleAction() {
+        if (editingId) {
+          updateItem();
+        } else {
+          addItem();
+        }
+      }
+
+      function addItem() {
+        const item = {
+          id: Date.now(),
+          day: document.getElementById("day").value,
+          subject: document.getElementById("subject").value,
+          type: document.getElementById("type").value,
+          startTime: document.getElementById("startTime").value,
+          endTime: document.getElementById("endTime").value,
+          note: document.getElementById("note").value,
+        };
+
+        if (!item.startTime || !item.endTime)
+          return showNotification("Vui lòng chọn thời gian!");
+
+        schedules.push(item);
+        saveDraftAndRender();
+        showNotification("Đã thêm môn học vào lịch!");
+        resetForm();
+      }
+
+      function editItem(id) {
+        const item = schedules.find((s) => s.id === id);
+        if (!item) return;
+
+        editingId = id;
+        document.getElementById("day").value = item.day;
+        document.getElementById("subject").value = item.subject;
+        document.getElementById("type").value = item.type;
+        document.getElementById("startTime").value = item.startTime;
+        document.getElementById("endTime").value = item.endTime;
+        document.getElementById("note").value = item.note || "";
+
+        const btn = document.getElementById("mainBtn");
+        btn.classList.remove("btn-add");
+        btn.classList.add("btn-edit-mode");
+        document.getElementById("btnText").innerText = "HOÀN THÀNH CHỈNH SỬA";
+        document.getElementById("btnIcon").innerText = "💾";
+        document.getElementById("cancelEdit").classList.remove("hidden");
+
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }
+
+      function updateItem() {
+        const index = schedules.findIndex((s) => s.id === editingId);
+        if (index === -1) return;
+
+        schedules[index] = {
+          ...schedules[index],
+          day: document.getElementById("day").value,
+          subject: document.getElementById("subject").value,
+          type: document.getElementById("type").value,
+          startTime: document.getElementById("startTime").value,
+          endTime: document.getElementById("endTime").value,
+          note: document.getElementById("note").value,
+        };
+
+        cancelEditMode();
+        saveDraftAndRender();
+        showNotification("Đã cập nhật thay đổi!");
+      }
+
+      function cancelEditMode() {
+        editingId = null;
+        resetForm();
+        const btn = document.getElementById("mainBtn");
+        btn.classList.add("btn-add");
+        btn.classList.remove("btn-edit-mode");
+        document.getElementById("btnText").innerText = "THÊM VÀO BẢNG";
+        document.getElementById("btnIcon").innerText = "✅";
+        document.getElementById("cancelEdit").classList.add("hidden");
+      }
+
+      function deleteItem(id) {
+        if (confirm("Bạn có chắc muốn xóa môn học này?")) {
+          schedules = schedules.filter((s) => s.id !== id);
+          saveDraftAndRender();
+          showNotification("Đã xóa khỏi lịch!");
+        }
+      }
+
+      function clearAllData() {
+        if (
+          confirm(
+            "Bạn có chắc chắn muốn xóa toàn bộ môn học trong lịch hiện tại? Hành động này không thể hoàn tác.",
+          )
+        ) {
+          schedules = [];
+          saveDraftAndRender();
+          showNotification("Đã dọn sạch lịch học!");
+        }
+      }
+
+      function resetForm() {
+        document.getElementById("note").value = "";
+      }
+
+      function saveDraftAndRender() {
+        localStorage.setItem("tkb_draft", JSON.stringify(schedules));
+        render();
+      }
+
+      function render() {
+        const tbody = document.getElementById("timetableBody");
+        tbody.innerHTML = "";
+        document.getElementById("countBadge").innerText = schedules.length;
+        document.getElementById("emptyState").style.display = schedules.length
+          ? "none"
+          : "block";
+
+        // Lấy các mốc thời gian duy nhất và sắp xếp
+        const timeSlots = [
+          ...new Set(schedules.map((s) => s.startTime)),
+        ].sort();
+
+        timeSlots.forEach((time) => {
+          const row = document.createElement("tr");
+          row.innerHTML = `<td class="time-col border-b border-emerald-50 font-bold">${time}</td>`;
+
+          days.forEach((day) => {
+            const td = document.createElement("td");
+            td.className = "border-b border-emerald-50";
+            const items = schedules.filter(
+              (s) => s.day === day && s.startTime === time,
+            );
+
+            items.forEach((item) => {
+              const color = colors[item.subject] || colors.default;
+              const tag = document.createElement("div");
+              tag.className = "class-item";
+              tag.style.backgroundColor = color.bg;
+              tag.style.borderColor = color.border;
+              tag.style.color = color.text;
+
+              tag.innerHTML = `
+                        <div class="item-actions">
+                            <button class="action-btn edit" onclick="editItem(${item.id})">Sửa</button>
+                            <button class="action-btn delete" onclick="deleteItem(${item.id})">Xóa</button>
+                        </div>
+                        <div class="font-bold text-sm mb-1">${item.subject}</div>
+                        <div class="text-[10px] font-bold opacity-80">${item.startTime} - ${item.endTime}</div>
+                        <div class="text-[9px] font-black uppercase mt-1 opacity-60">${item.type}</div>
+                        ${item.note ? `<div class="text-[8px] mt-1 italic border-t border-black/5 pt-1">${item.note}</div>` : ""}
+                    `;
+              td.appendChild(tag);
+            });
+            row.appendChild(td);
+          });
+          tbody.appendChild(row);
+        });
+      }
+
+      function openSaveModal() {
+        if (!schedules.length) return showNotification("Chưa có gì để lưu!");
+        document.getElementById("saveModal").style.display = "flex";
+      }
+
+      function confirmSave() {
+        const name =
+          document.getElementById("saveName").value || "Bản lưu chưa đặt tên";
+        const entry = {
+          id: Date.now(),
+          name: name,
+          data: JSON.parse(JSON.stringify(schedules)),
+          date: new Date().toLocaleDateString("vi-VN"),
+        };
+        archive.unshift(entry);
+        localStorage.setItem("tkb_archive", JSON.stringify(archive));
+        closeModals();
+        showNotification("Đã lưu vào kho lưu trữ!");
+        document.getElementById("currentTitle").innerText = name;
+      }
+
+      function openArchiveModal() {
+        const container = document.getElementById("archiveItems");
+        container.innerHTML = archive.length
+          ? ""
+          : "<p class='text-center py-10 text-slate-300'>Kho lưu đang trống</p>";
+
+        archive.forEach((item) => {
+          const div = document.createElement("div");
+          div.className = "archive-item";
+          div.innerHTML = `
+                <div>
+                    <div class="font-bold text-slate-700">${item.name}</div>
+                    <div class="text-[10px] text-slate-400">${item.date} • ${item.data.length} tiết</div>
+                </div>
+                <div class="flex gap-2">
+                    <button onclick="loadArchive(${item.id})" class="bg-emerald-50 text-emerald-600 text-xs font-bold px-3 py-1.5 rounded-lg">MỞ</button>
+                    <button onclick="deleteArchive(${item.id})" class="text-red-400 hover:text-red-600 font-black px-2 text-lg">✕</button>
+                </div>
+            `;
+          container.appendChild(div);
+        });
+        document.getElementById("archiveModal").style.display = "flex";
+      }
+
+      function loadArchive(id) {
+        const item = archive.find((a) => a.id === id);
+        if (item) {
+          schedules = JSON.parse(JSON.stringify(item.data));
+          document.getElementById("currentTitle").innerText = item.name;
+          saveDraftAndRender();
+          closeModals();
+          showNotification(`Đã mở: ${item.name}`);
+        }
+      }
+
+      function deleteArchive(id) {
+        if (confirm("Xóa bản lưu này vĩnh viễn?")) {
+          archive = archive.filter((a) => a.id !== id);
+          localStorage.setItem("tkb_archive", JSON.stringify(archive));
+          openArchiveModal();
+          showNotification("Đã xóa bản lưu!");
+        }
+      }
+
+      function closeModals() {
+        document
+          .querySelectorAll(".modal-overlay")
+          .forEach((m) => (m.style.display = "none"));
+      }
+
+      async function downloadImage() {
+        const area = document.getElementById("captureArea");
+        if (!schedules.length)
+          return showNotification("Lịch trống, không thể tải ảnh!");
+
+        showNotification("Đang xử lý hình ảnh...");
+
+        // Thiết lập canvas để bao quát hết bảng
+        const options = {
+          scale: 2,
+          backgroundColor: "#ffffff",
+          logging: false,
+          useCORS: true,
+          allowTaint: true,
+          scrollX: 0,
+          scrollY: -window.scrollY,
+          windowWidth: area.scrollWidth + 100, // Đảm bảo chiều rộng đủ cho đến CN
+          onclone: (clonedDoc) => {
+            const clonedArea = clonedDoc.getElementById("captureArea");
+            clonedArea.style.width = "1300px"; // Cố định chiều rộng khi chụp
+            clonedArea.style.maxWidth = "none";
+
+            // Ẩn các nút Sửa/Xóa khi chụp ảnh để ảnh đẹp hơn
+            clonedDoc
+              .querySelectorAll(".item-actions")
+              .forEach((el) => (el.style.display = "none"));
+          },
+        };
+
+        try {
+          const canvas = await html2canvas(area, options);
+          const link = document.createElement("a");
+          link.download = `ThoiKhoaBieu_Pastel_${Date.now()}.png`;
+          link.href = canvas.toDataURL("image/png");
+          link.click();
+          showNotification("Đã tải ảnh về thành công!");
+        } catch (err) {
+          console.error(err);
+          showNotification("Lỗi khi tạo ảnh, hãy thử lại.");
+        }
+      }
+    </script>
+  </body>
+  <footer>
+    <p text align="center">&copy; Bản quyền thuộc về HeThongSTM - STM EDU</p>
+  </footer>
+</html>
