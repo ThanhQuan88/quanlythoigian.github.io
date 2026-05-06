@@ -238,47 +238,42 @@
         width: 100%;
         overflow: visible;
       }
-      /* Style cho cảnh báo trùng lịch */
+      /* Giao diện Modal Cảnh báo trùng lịch */
       .conflict-modal-overlay {
         position: fixed;
         top: 0;
         left: 0;
         right: 0;
         bottom: 0;
-        background: rgba(220, 38, 38, 0.1); /* Màu đỏ nhạt */
-        backdrop-filter: blur(8px);
+        background: rgba(220, 38, 38, 0.15);
+        backdrop-filter: blur(10px);
         display: none;
         align-items: center;
         justify-content: center;
-        z-index: 5000;
+        z-index: 9999;
       }
 
       .conflict-card {
         background: white;
         padding: 30px;
-        border-radius: 24px;
+        border-radius: 28px;
         width: 90%;
-        max-width: 450px;
-        border: 3px solid #fee2e2;
-        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+        max-width: 420px;
+        border: 1px solid #fee2e2;
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.2);
         text-align: center;
-      }
-
-      .conflict-icon {
-        font-size: 50px;
-        margin-bottom: 15px;
-        display: block;
       }
 
       #conflictDetails {
         background: #fff5f5;
-        border-radius: 12px;
-        padding: 15px;
-        margin: 15px 0;
+        border-radius: 16px;
+        padding: 18px;
+        margin: 20px 0;
         text-align: left;
-        font-size: 0.9rem;
+        font-size: 0.95rem;
         color: #b91c1c;
-        border-left: 4px solid #ef4444;
+        border-left: 5px solid #ef4444;
+        line-height: 1.6;
       }
     </style>
   </head>
@@ -502,25 +497,31 @@
     <!-- MODAL CẢNH BÁO TRÙNG LỊCH -->
     <div id="conflictModal" class="conflict-modal-overlay">
       <div class="conflict-card">
-        <span class="conflict-icon">⚠️</span>
-        <h3 class="text-xl font-black text-red-600 mb-2">
+        <div class="text-5xl mb-4">⚠️</div>
+        <h3 class="text-xl font-bold text-red-600 mb-2">
           PHÁT HIỆN TRÙNG LỊCH!
         </h3>
-        <p class="text-slate-500 text-sm">
-          Môn học này đang bị chồng lấn thời gian với một môn học khác đã có
-          sẵn.
+        <p class="text-slate-500 text-sm px-4">
+          Môn học này đang bị chồng lấn thời gian với một môn khác đã có trên
+          bảng.
         </p>
 
-        <div id="conflictDetails">
-          <!-- Thông tin trùng sẽ hiện ở đây -->
-        </div>
+        <div id="conflictDetails"></div>
 
-        <button
-          onclick="closeConflictModal()"
-          class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 rounded-xl transition-all"
-        >
-          ĐÃ HIỂU & KIỂM TRA LẠI
-        </button>
+        <div class="flex flex-col gap-3">
+          <button
+            onclick="forceSaveConflict()"
+            class="w-full bg-amber-500 hover:bg-amber-600 text-white font-bold py-3 rounded-xl transition-all shadow-lg shadow-amber-200"
+          >
+            TIẾP TỤC THÊM MÔN HỌC
+          </button>
+          <button
+            onclick="closeConflictModal()"
+            class="w-full bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold py-3 rounded-xl transition-all"
+          >
+            ĐỂ TÔI KIỂM TRA LẠI
+          </button>
+        </div>
       </div>
     </div>
     <div id="notification">Thông báo</div>
@@ -571,6 +572,40 @@
         }
       }
 
+      // BIẾN TẠM LƯU DỮ LIỆU KHI CHỜ XÁC NHẬN TRÙNG LỊCH
+      let pendingData = null;
+
+      // 1. Chuyển đổi thời gian sang phút
+      function timeToMinutes(timeStr) {
+        const [hrs, mins] = timeStr.split(":").map(Number);
+        return hrs * 60 + mins;
+      }
+
+      // 2. Đóng Modal cảnh báo
+      function closeConflictModal() {
+        document.getElementById("conflictModal").style.display = "none";
+        pendingData = null;
+      }
+
+      // 3. Hàm "Ép buộc" thêm môn bất chấp trùng lịch
+      function forceSaveConflict() {
+        if (pendingData) {
+          if (editingId) {
+            const index = schedules.findIndex((s) => s.id === editingId);
+            if (index !== -1) schedules[index] = pendingData;
+            cancelEditMode();
+            showNotification("Đã cập nhật (chấp nhận trùng)!");
+          } else {
+            schedules.push(pendingData);
+            showNotification("Đã thêm (chấp nhận trùng)!");
+          }
+          saveDraftAndRender();
+          closeConflictModal();
+          resetForm();
+        }
+      }
+
+      // 4. Hàm Thêm mới (Đã tích hợp kiểm tra trùng)
       function addItem() {
         const newItem = {
           id: Date.now(),
@@ -583,42 +618,32 @@
         };
 
         if (!newItem.startTime || !newItem.endTime)
-          return showNotification("Vui lòng chọn thời gian!");
+          return showNotification("Vui lòng nhập giờ!");
 
-        // --- LOGIC KIỂM TRA TRÙNG ---
         const startNew = timeToMinutes(newItem.startTime);
         const endNew = timeToMinutes(newItem.endTime);
-
         if (startNew >= endNew)
-          return showNotification(
-            "Thời gian kết thúc phải sau thời gian bắt đầu!",
-          );
+          return showNotification("Giờ kết thúc phải sau giờ bắt đầu!");
 
-        const conflict = schedules.find((existing) => {
-          if (existing.day !== newItem.day) return false; // Khác ngày thì không trùng
-
-          const startEx = timeToMinutes(existing.startTime);
-          const endEx = timeToMinutes(existing.endTime);
-
-          // Kiểm tra chồng lấn: (Bắt đầu A < Kết thúc B) VÀ (Bắt đầu B < Kết thúc A)
-          return startNew < endEx && startEx < endNew;
-        });
+        // Kiểm tra trùng
+        const conflict = schedules.find(
+          (ex) =>
+            ex.day === newItem.day &&
+            startNew < timeToMinutes(ex.endTime) &&
+            timeToMinutes(ex.startTime) < endNew,
+        );
 
         if (conflict) {
-          const detailBox = document.getElementById("conflictDetails");
-          detailBox.innerHTML = `
-            <strong>Môn bị trùng:</strong> ${conflict.subject}<br>
-            <strong>Thứ:</strong> ${conflict.day === "CN" ? "Chủ Nhật" : "Thứ " + conflict.day}<br>
-            <strong>Thời gian:</strong> ${conflict.startTime} - ${conflict.endTime}
-        `;
+          pendingData = newItem;
+          document.getElementById("conflictDetails").innerHTML =
+            `<b>Môn trùng:</b> ${conflict.subject}<br><b>Thứ:</b> ${conflict.day}<br><b>Giờ:</b> ${conflict.startTime} - ${conflict.endTime}`;
           document.getElementById("conflictModal").style.display = "flex";
-          return; // Dừng việc thêm vào bảng
+          return;
         }
-        // --- HẾT LOGIC KIỂM TRA ---
 
         schedules.push(newItem);
         saveDraftAndRender();
-        showNotification("Đã thêm môn học vào lịch!");
+        showNotification("Đã thêm vào lịch!");
         resetForm();
       }
 
@@ -644,11 +669,8 @@
         window.scrollTo({ top: 0, behavior: "smooth" });
       }
 
+      // 5. Hàm Cập nhật (Đã tích hợp kiểm tra trùng)
       function updateItem() {
-        const index = schedules.findIndex((s) => s.id === editingId);
-        if (index === -1) return;
-
-        // 1. Tạo đối tượng tạm thời để kiểm tra trùng
         const updatedData = {
           id: editingId,
           day: document.getElementById("day").value,
@@ -659,44 +681,31 @@
           note: document.getElementById("note").value,
         };
 
-        // 2. Kiểm tra logic thời gian cơ bản
         const startNew = timeToMinutes(updatedData.startTime);
         const endNew = timeToMinutes(updatedData.endTime);
-        if (startNew >= endNew)
-          return showNotification(
-            "Thời gian kết thúc phải sau thời gian bắt đầu!",
-          );
 
-        // 3. Kiểm tra trùng lịch với các môn KHÁC (loại trừ chính môn đang sửa)
-        const conflict = schedules.find((existing) => {
-          // Điều kiện: Cùng ngày VÀ Không phải là chính nó
-          if (existing.day !== updatedData.day || existing.id === editingId)
-            return false;
-
-          const startEx = timeToMinutes(existing.startTime);
-          const endEx = timeToMinutes(existing.endTime);
-
-          // Thuật toán kiểm tra chồng lấn
-          return startNew < endEx && startEx < endNew;
-        });
+        // Kiểm tra trùng (loại trừ chính nó bằng editingId)
+        const conflict = schedules.find(
+          (ex) =>
+            ex.id !== editingId &&
+            ex.day === updatedData.day &&
+            startNew < timeToMinutes(ex.endTime) &&
+            timeToMinutes(ex.startTime) < endNew,
+        );
 
         if (conflict) {
-          const detailBox = document.getElementById("conflictDetails");
-          detailBox.innerHTML = `
-            <strong>Môn bị trùng:</strong> ${conflict.subject}<br>
-            <strong>Thứ:</strong> ${conflict.day === "CN" ? "Chủ Nhật" : "Thứ " + conflict.day}<br>
-            <strong>Thời gian:</strong> ${conflict.startTime} - ${conflict.endTime}
-        `;
+          pendingData = updatedData;
+          document.getElementById("conflictDetails").innerHTML =
+            `<b>Môn trùng:</b> ${conflict.subject}<br><b>Thứ:</b> ${conflict.day}<br><b>Giờ:</b> ${conflict.startTime} - ${conflict.endTime}`;
           document.getElementById("conflictModal").style.display = "flex";
-          return; // Dừng việc cập nhật
+          return;
         }
 
-        // 4. Nếu không trùng thì tiến hành cập nhật chính thức
-        schedules[index] = updatedData;
-
+        const index = schedules.findIndex((s) => s.id === editingId);
+        if (index !== -1) schedules[index] = updatedData;
         cancelEditMode();
         saveDraftAndRender();
-        showNotification("Đã cập nhật thay đổi!");
+        showNotification("Đã cập nhật!");
       }
 
       function cancelEditMode() {
