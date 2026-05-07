@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Thời khóa biểu Pastel Pro</title>
+    <title>Hệ Sinh Thái STM EDU</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <link
@@ -11,6 +11,10 @@
       rel="stylesheet"
     />
     <style>
+      #countdown div div {
+        transition: all 0.3s ease;
+        font-variant-numeric: tabular-nums; /* Giữ các con số không bị nhảy vị trí khi thay đổi */
+      }
       :root {
         --bg-main: #f3faf6;
         --text-header: #105235;
@@ -285,6 +289,33 @@
         Đừng để thời gian làm bạn bối rối. Hãy xếp lịch hiệu quả!
       </p>
 
+      <!--Đếm ngược kỳ thi THPT 2026-->
+      <div
+        class="mb-6 bg-white rounded-xl shadow-md border-l-4 border-green-600 p-4"
+      >
+        <h2 class="text-lg font-bold text-green-800 mb-2 flex items-center">
+          ⌚ ĐẾM NGƯỢC KỲ THI THPTQG 2026
+        </h2>
+        <div id="countdown" class="grid grid-cols-4 gap-2 text-center">
+          <div class="bg-green-50 p-2 rounded-lg">
+            <div id="days" class="text-2xl font-bold text-green-700">00</div>
+            <div class="text-xs uppercase text-green-600">Ngày</div>
+          </div>
+          <div class="bg-green-50 p-2 rounded-lg">
+            <div id="hours" class="text-2xl font-bold text-green-700">00</div>
+            <div class="text-xs uppercase text-green-600">Giờ</div>
+          </div>
+          <div class="bg-green-50 p-2 rounded-lg">
+            <div id="minutes" class="text-2xl font-bold text-green-700">00</div>
+            <div class="text-xs uppercase text-green-600">Phút</div>
+          </div>
+          <div class="bg-green-50 p-2 rounded-lg">
+            <div id="seconds" class="text-2xl font-bold text-green-700">00</div>
+            <div class="text-xs uppercase text-green-600">Giây</div>
+          </div>
+        </div>
+      </div>
+
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
         <!-- CỘT NHẬP LIỆU -->
         <div class="lg:col-span-4">
@@ -455,6 +486,141 @@
       </div>
     </div>
 
+    <div
+      class="bg-white p-6 rounded-3xl shadow-lg mt-8 border border-slate-100"
+    >
+      <h3 class="text-xl font-bold text-slate-800 mb-6 flex items-center gap-2">
+        <span>🏔️</span> Hành Trình Chinh Phục Đỉnh THPTQG 2026
+      </h3>
+
+      <div
+        class="relative h-48 bg-slate-50 rounded-2xl overflow-hidden border border-dashed border-slate-200"
+      >
+        <svg class="absolute inset-0 w-full h-full" preserveAspectRatio="none">
+          <path
+            id="mountainPath"
+            d="M0,180 Q250,150 500,100 T1000,20"
+            fill="none"
+            stroke="#e2e8f0"
+            stroke-width="4"
+            stroke-dasharray="8 8"
+          />
+          <path
+            id="progressPath"
+            d="M0,180 Q250,150 500,100 T1000,20"
+            fill="none"
+            stroke="#10b981"
+            stroke-width="6"
+            stroke-linecap="round"
+            style="transition: stroke-dashoffset 1s ease-in-out"
+          />
+        </svg>
+
+        <div class="absolute right-4 top-2 text-3xl" title="Đích đến 11/06">
+          🚩
+        </div>
+
+        <div
+          id="climber"
+          class="absolute transition-all duration-1000 ease-in-out"
+          style="bottom: 0; left: 0"
+        >
+          <div class="text-3xl">🧗‍♂️</div>
+          <div
+            class="bg-white text-[10px] font-bold px-2 py-1 rounded-full shadow-sm border border-slate-200 whitespace-nowrap"
+          >
+            Người leo núi
+          </div>
+        </div>
+      </div>
+      <div class="grid grid-cols-2 gap-4 mt-6">
+        <div class="bg-emerald-50 p-4 rounded-2xl">
+          <p class="text-sm text-emerald-600 font-medium">Tiến độ hoàn thành</p>
+          <p id="percentText" class="text-2xl font-bold text-emerald-700">0%</p>
+        </div>
+        <div class="bg-blue-50 p-4 rounded-2xl">
+          <p class="text-sm text-blue-600 font-medium">Còn lại</p>
+          <p id="daysLeftText" class="text-2xl font-bold text-blue-700">
+            -- ngày
+          </p>
+        </div>
+      </div>
+    </div>
+    <!--Đồng hồ sinh học-->
+    <div
+      class="bg-white p-6 rounded-3xl shadow-lg border border-slate-100 mt-6 transition-all duration-500"
+      id="pomodoroContainer"
+    >
+      <h3 class="text-xl font-bold text-slate-800 mb-4 flex items-center gap-2">
+        <span>⏱️</span> Trạng Thái Tập Trung (Flow State)
+      </h3>
+
+      <div
+        class="flex flex-col items-center justify-center py-6 bg-slate-50 rounded-2xl border border-dashed border-slate-200"
+      >
+        <div class="relative flex items-center justify-center">
+          <svg class="w-40 h-40 transform -rotate-90">
+            <circle
+              cx="80"
+              cy="80"
+              r="70"
+              stroke="currentColor"
+              stroke-width="8"
+              fill="transparent"
+              class="text-slate-200"
+            />
+            <circle
+              id="timerProgress"
+              cx="80"
+              cy="80"
+              r="70"
+              stroke="currentColor"
+              stroke-width="8"
+              fill="transparent"
+              class="text-emerald-500 transition-all duration-1000"
+              stroke-dasharray="440"
+              stroke-dashoffset="0"
+              stroke-linecap="round"
+            />
+          </svg>
+          <div
+            class="absolute text-4xl font-black text-slate-700"
+            id="timerDisplay"
+          >
+            25:00
+          </div>
+        </div>
+
+        <div class="flex gap-3 mt-6">
+          <button
+            onclick="toggleTimer()"
+            id="btnStart"
+            class="bg-emerald-500 hover:bg-emerald-600 text-white px-6 py-2 rounded-xl font-bold transition-all active:scale-95 shadow-md"
+          >
+            BẮT ĐẦU HỌC
+          </button>
+          <button
+            onclick="resetTimer()"
+            class="bg-slate-200 hover:bg-slate-300 text-slate-600 px-4 py-2 rounded-xl font-bold transition-all"
+          >
+            ĐẶT LẠI
+          </button>
+        </div>
+
+        <p
+          id="timerStatus"
+          class="mt-4 text-sm font-medium text-slate-500 italic"
+        >
+          Bạn đã sẵn sàng chưa?
+        </p>
+      </div>
+    </div>
+
+    <div
+      id="focusOverlay"
+      class="fixed inset-0 bg-slate-900/40 backdrop-blur-md z-[40] hidden pointer-events-none transition-opacity duration-1000"
+    ></div>
+
     <!-- MODALS -->
     <div id="saveModal" class="modal-overlay">
       <div class="modal-content">
@@ -547,9 +713,13 @@
       };
 
       window.onload = () => {
+        // Lấy dữ liệu từ máy
         const savedArchive = localStorage.getItem("tkb_archive");
-        if (savedArchive) archive = JSON.parse(savedArchive);
+        if (savedArchive) {
+          archive = JSON.parse(savedArchive);
+        }
 
+        // Lấy bản nháp cuối cùng (nếu có)
         const lastDraft = localStorage.getItem("tkb_draft");
         if (lastDraft) {
           schedules = JSON.parse(lastDraft);
@@ -803,20 +973,27 @@
         document.getElementById("saveModal").style.display = "flex";
       }
 
+      // Cập nhật hàm xác nhận lưu vào kho
       function confirmSave() {
-        const name =
-          document.getElementById("saveName").value || "Bản lưu chưa đặt tên";
-        const entry = {
+        const name = document.getElementById("saveName").value.trim();
+        if (!name) return showNotification("Vui lòng nhập tên bản lưu!");
+
+        const newEntry = {
           id: Date.now(),
           name: name,
-          data: JSON.parse(JSON.stringify(schedules)),
-          date: new Date().toLocaleDateString("vi-VN"),
+          data: [...schedules], // Sao chép toàn bộ lịch hiện tại
+          date: new Date().toLocaleString("vi-VN"),
         };
-        archive.unshift(entry);
+
+        // Thêm vào biến archive hiện tại
+        archive.push(newEntry);
+
+        // QUAN TRỌNG: Lưu ngay lập tức vào localStorage để không bị mất khi thoát
         localStorage.setItem("tkb_archive", JSON.stringify(archive));
+
+        showNotification("Đã lưu vào Kho lưu trữ thành công!");
+        document.getElementById("saveName").value = "";
         closeModals();
-        showNotification("Đã lưu vào kho lưu trữ!");
-        document.getElementById("currentTitle").innerText = name;
       }
 
       function openArchiveModal() {
@@ -920,6 +1097,197 @@
       function closeConflictModal() {
         document.getElementById("conflictModal").style.display = "none";
       }
+      function deleteArchiveItem(id) {
+        if (confirm("Bạn có chắc chắn muốn xóa bản lưu này không?")) {
+          // Lọc bỏ item có id tương ứng
+          archive = archive.filter((item) => item.id !== id);
+
+          // Cập nhật lại bộ nhớ máy
+          localStorage.setItem("tkb_archive", JSON.stringify(archive));
+
+          // Vẽ lại giao diện kho lưu trữ
+          renderArchive();
+          showNotification("Đã xóa bản lưu!");
+        }
+      }
+      <!-- Đếm ngược đến kỳ thi THPTQG 2026 -->
+      function updateCountdown() {
+        // Ngày thi dự kiến: 11 tháng 6 năm 2026
+        const examDate = new Date("June 11, 2026 00:00:00").getTime();
+        const now = new Date().getTime();
+        const diff = examDate - now;
+
+        if (diff > 0) {
+          const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+          const hours = Math.floor(
+            (diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60),
+          );
+          const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+          const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+          document.getElementById("days").innerText =
+            days < 10 ? "0" + days : days;
+          document.getElementById("hours").innerText =
+            hours < 10 ? "0" + hours : hours;
+          document.getElementById("minutes").innerText =
+            minutes < 10 ? "0" + minutes : minutes;
+          document.getElementById("seconds").innerText =
+            seconds < 10 ? "0" + seconds : seconds;
+        } else {
+          document.getElementById("countdown").innerHTML =
+            "<div class='col-span-4 text-green-600 font-bold'>KỲ THI ĐANG DIỄN RA HOẶC ĐÃ KẾT THÚC!</div>";
+        }
+      }
+
+      // Chạy hàm ngay lập tức và sau đó mỗi giây cập nhật 1 lần
+      updateCountdown();
+      setInterval(updateCountdown, 1000);
+      //Leo núi chinh phục đỉnh THPTQG 2026
+      function updateSummitMap() {
+        // 1. Cấu hình ngày tháng đồng bộ với đồng hồ đếm ngược
+        const startDate = new Date("2025-09-01T00:00:00").getTime();
+        const examDate = new Date("2026-06-11T00:00:00").getTime();
+        const today = new Date().getTime();
+
+        const totalDuration = examDate - startDate;
+        const elapsed = today - startDate;
+
+        // 2. Tính toán phần trăm chính xác
+        let progress = (elapsed / totalDuration) * 100;
+        progress = Math.max(0, Math.min(100, progress));
+
+        // 3. Cập nhật con số (Dùng Math.floor để khớp với đồng hồ đếm ngược)
+        const percentEl = document.getElementById("percentText");
+        const daysEl = document.getElementById("daysLeftText");
+
+        if (percentEl) percentEl.textContent = Math.round(progress) + "%";
+
+        const daysLeft = Math.floor((examDate - today) / (1000 * 60 * 60 * 24));
+        if (daysEl)
+          daysEl.textContent =
+            daysLeft > 0 ? daysLeft + " ngày" : "Đã đến kỳ thi!";
+
+        // 4. Sửa lỗi vị trí người leo núi bám sát đường kẻ
+        const climber = document.getElementById("climber");
+        const path = document.getElementById("progressPath");
+
+        if (path) {
+          const pathLength = path.getTotalLength();
+          path.style.strokeDasharray = pathLength;
+          // Đường xanh vẽ đến đâu
+          path.style.strokeDashoffset =
+            pathLength - (pathLength * progress) / 100;
+
+          // Lấy tọa độ chính xác trên đường cong SVG
+          const point = path.getPointAtLength((pathLength * progress) / 100);
+
+          if (climber) {
+            // Đưa người leo núi vào đúng vị trí tọa độ của đường kẻ
+            // Trừ đi một khoảng nhỏ để icon nằm đè lên dây thay vì lệch ra ngoài
+            climber.style.left = `${(point.x / path.ownerSVGElement.clientWidth) * 100}%`;
+            climber.style.top = `${(point.y / path.ownerSVGElement.clientHeight) * 100}%`;
+            climber.style.transform = `translate(-50%, -100%)`; // Căn giữa icon vào điểm tọa độ
+            climber.style.bottom = "auto"; // Hủy bỏ bottom cũ để không bị xung đột
+          }
+        }
+      }
+
+      // Gọi hàm
+      window.onload = updateSummitMap;
+      window.onresize = updateSummitMap;
+      //Đồng hồ sinh học
+      let timeLeft = 25 * 60; // 25 phút mặc định
+      let timerId = null;
+      let isWorking = true;
+
+      function updateTimerDisplay() {
+        const minutes = Math.floor(timeLeft / 60);
+        const seconds = timeLeft % 60;
+        const display = `${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
+        document.getElementById("timerDisplay").textContent = display;
+
+        // Cập nhật vòng tròn tiến trình
+        const circle = document.getElementById("timerProgress");
+        const total = isWorking ? 25 * 60 : 5 * 60;
+        const offset = 440 - (440 * timeLeft) / total;
+        circle.style.strokeDashoffset = offset;
+      }
+
+      function toggleTimer() {
+        const btn = document.getElementById("btnStart");
+        const overlay = document.getElementById("focusOverlay");
+        const container = document.getElementById("pomodoroContainer");
+
+        if (timerId) {
+          // Tạm dừng
+          clearInterval(timerId);
+          timerId = null;
+          btn.textContent = "TIẾP TỤC";
+          btn.className = btn.className.replace(
+            "bg-orange-500",
+            "bg-emerald-500",
+          );
+          overlay.classList.add("hidden");
+          container.style.zIndex = "1";
+        } else {
+          // Chạy đồng hồ
+          btn.textContent = "TẠM DỪNG";
+          btn.className = btn.className.replace(
+            "bg-emerald-500",
+            "bg-orange-500",
+          );
+
+          // Hiệu ứng Focus Mode
+          overlay.classList.remove("hidden");
+          container.classList.add("relative", "z-[50]");
+
+          timerId = setInterval(() => {
+            timeLeft--;
+            updateTimerDisplay();
+
+            if (timeLeft <= 0) {
+              clearInterval(timerId);
+              timerId = null;
+              alert(
+                isWorking
+                  ? "Hết giờ học rồi! Nghỉ 5 phút nhé Quân."
+                  : "Hết giờ nghỉ! Tiếp tục chiến đấu thôi.",
+              );
+              switchMode();
+            }
+          }, 1000);
+        }
+      }
+
+      function switchMode() {
+        isWorking = !isWorking;
+        timeLeft = isWorking ? 25 * 60 : 5 * 60;
+        document.getElementById("timerStatus").textContent = isWorking
+          ? "Tập trung cao độ nào!"
+          : "Xả hơi một chút...";
+        document
+          .getElementById("timerProgress")
+          .classList.toggle("text-emerald-500");
+        document
+          .getElementById("timerProgress")
+          .classList.toggle("text-blue-500");
+        updateTimerDisplay();
+      }
+
+      function resetTimer() {
+        clearInterval(timerId);
+        timerId = null;
+        isWorking = true;
+        timeLeft = 25 * 60;
+        document.getElementById("focusOverlay").classList.add("hidden");
+        document.getElementById("btnStart").textContent = "BẮT ĐẦU HỌC";
+        document.getElementById("timerStatus").textContent =
+          "Sẵn sàng bứt phá!";
+        updateTimerDisplay();
+      }
+
+      // Khởi tạo hiển thị ban đầu
+      updateTimerDisplay();
     </script>
   </body>
   <footer>
